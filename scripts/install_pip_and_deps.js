@@ -32,9 +32,9 @@ async function run() {
       fs.unlinkSync('./get-pip.py');
     }
 
-    console.log('Installing pandas, numpy, lightgbm, scikit-learn, joblib via pip...');
+    console.log('Installing pandas, numpy, lightgbm, scikit-learn, joblib, pybaseball via pip...');
     // We run python3 -m pip with --user so it installs inside the user path without requiring root
-    execSync('python3 -m pip install pandas numpy lightgbm scikit-learn joblib --user --quiet', { stdio: 'inherit' });
+    execSync('python3 -m pip install pandas numpy lightgbm scikit-learn joblib pybaseball --user --quiet', { stdio: 'inherit' });
     console.log('🎉 All python dependencies are successfully installed!');
 
   } catch (error) {
