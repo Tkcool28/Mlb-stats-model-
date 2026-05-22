@@ -1,0 +1,16 @@
+feature,importance
+home_runs_allowed_per_game_pre_game,195
+away_run_diff_per_game_pre_game,176
+away_runs_allowed_per_game_pre_game,160
+home_games_played_to_date,142
+home_run_diff_per_game_pre_game,137
+away_win_pct_pre_game,131
+home_runs_scored_per_game_pre_game,130
+away_runs_scored_per_game_pre_game,114
+away_last_10_run_diff_per_game,108
+away_games_played_to_date,83
+home_win_pct_pre_game,82
+home_last_10_run_diff_per_game,71
+home_last_10_win_pct,27
+away_last_10_win_pct,26
+home_field_flag,0

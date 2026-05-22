@@ -1,0 +1,6 @@
+{
+  "name": "MLB Game Predictor",
+  "description": "A full-stack MLB game predictor application trained on 2010-2018 completed seasons, validated on 2019-2020, and backtested on the 2021-2025 holdout seasons.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
