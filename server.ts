@@ -143,6 +143,20 @@ app.get('/api/schedule', async (req, res) => {
         const homeTeamProfile = pipeline.teamMap[`${statsSeason}_${homeAbbr}`] || pipeline.teamMap[`2025_${homeAbbr}`];
         const awayTeamProfile = pipeline.teamMap[`${statsSeason}_${awayAbbr}`] || pipeline.teamMap[`2025_${awayAbbr}`];
 
+        // Resolve actual pregame features if they're in our pipeline database
+        const pregameFeature = pipeline.pregamePitcherFeatureMap[game.gamePk];
+        let hStarterEra = homePitcherStats?.era || parseFloat(homeTeamProfile?.pitching?.era || '4.20');
+        let hStarterWhip = homePitcherStats?.whip || parseFloat(homeTeamProfile?.pitching?.whip || '1.30');
+        let aStarterEra = awayPitcherStats?.era || parseFloat(awayTeamProfile?.pitching?.era || '4.20');
+        let aStarterWhip = awayPitcherStats?.whip || parseFloat(awayTeamProfile?.pitching?.whip || '1.30');
+
+        if (pregameFeature) {
+          hStarterEra = pregameFeature.home_era_pre_game;
+          hStarterWhip = pregameFeature.home_whip_pre_game;
+          aStarterEra = pregameFeature.away_era_pre_game;
+          aStarterWhip = pregameFeature.away_whip_pre_game;
+        }
+
         const baseGameInfo = {
           gamePk: game.gamePk,
           time: game.gameDate ? new Date(game.gameDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Scheduled',
@@ -153,13 +167,13 @@ app.get('/api/schedule', async (req, res) => {
           homeStarterName: hoProbable?.fullName || 'TBD',
           homeStarterId: hoProbable?.id || null,
           homeStarterHand: homePitcherStats?.pitchHand || 'R',
-          homeStarterERA: homePitcherStats?.era || parseFloat(homeTeamProfile?.pitching?.era || '4.20'),
-          homeStarterWHIP: homePitcherStats?.whip || parseFloat(homeTeamProfile?.pitching?.whip || '1.30'),
+          homeStarterERA: hStarterEra,
+          homeStarterWHIP: hStarterWhip,
           awayStarterName: awProbable?.fullName || 'TBD',
           awayStarterId: awProbable?.id || null,
           awayStarterHand: awayPitcherStats?.pitchHand || 'R',
-          awayStarterERA: awayPitcherStats?.era || parseFloat(awayTeamProfile?.pitching?.era || '4.20'),
-          awayStarterWHIP: awayPitcherStats?.whip || parseFloat(awayTeamProfile?.pitching?.whip || '1.30'),
+          awayStarterERA: aStarterEra,
+          awayStarterWHIP: aStarterWhip,
           homeScore: null,
           awayScore: null,
           date: dateStr,

@@ -13,6 +13,7 @@ export class DataPipeline {
   
   // High-performance chronological pregame features lookup cache
   gameFeatureMap: Record<number, Record<string, number>> = {};
+  pregamePitcherFeatureMap: Record<number, Record<string, number>> = {};
   classifier: LightGBMClassifier | null = null;
 
   constructor() {
@@ -26,6 +27,47 @@ export class DataPipeline {
       const gamesFile = path.join(dataDir, 'mlb_games.json');
       const teamsFile = path.join(dataDir, 'mlb_teams.json');
       const pitchersFile = path.join(dataDir, 'mlb_pitchers.json');
+
+      // Load pregame rolling pitcher stats CSV
+      const pitcherRollingFile = path.resolve('./data/processed/stats_model/pitcher_rolling_pregame_features_2010_2025.csv');
+      if (fs.existsSync(pitcherRollingFile)) {
+        console.log('[DataPipeline] Sourcing rolling pregame pitcher stats from CSV...');
+        const csvContent = fs.readFileSync(pitcherRollingFile, 'utf8');
+        const lines = csvContent.split('\n');
+        if (lines.length > 0) {
+          const headers = lines[0].trim().split(',');
+          const gamePkIdx = headers.indexOf('gamePk');
+          const hEraIdx = headers.indexOf('home_era_pre_game');
+          const aEraIdx = headers.indexOf('away_era_pre_game');
+          const hWhipIdx = headers.indexOf('home_whip_pre_game');
+          const aWhipIdx = headers.indexOf('away_whip_pre_game');
+          const hKIdx = headers.indexOf('home_k_pct_pre_game');
+          const aKIdx = headers.indexOf('away_k_pct_pre_game');
+          const hBBIdx = headers.indexOf('home_bb_pct_pre_game');
+          const aBBIdx = headers.indexOf('away_bb_pct_pre_game');
+          
+          for (let i = 1; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+            const cols = line.split(',');
+            if (cols.length < headers.length) continue;
+            const gamePk = parseInt(cols[gamePkIdx], 10);
+            if (!isNaN(gamePk)) {
+              this.pregamePitcherFeatureMap[gamePk] = {
+                home_era_pre_game: parseFloat(cols[hEraIdx]),
+                away_era_pre_game: parseFloat(cols[aEraIdx]),
+                home_whip_pre_game: parseFloat(cols[hWhipIdx]),
+                away_whip_pre_game: parseFloat(cols[aWhipIdx]),
+                home_k_pct_pre_game: parseFloat(cols[hKIdx]),
+                away_k_pct_pre_game: parseFloat(cols[aKIdx]),
+                home_bb_pct_pre_game: parseFloat(cols[hBBIdx]),
+                away_bb_pct_pre_game: parseFloat(cols[aBBIdx]),
+              };
+            }
+          }
+          console.log(`[DataPipeline] Loaded pitcher pregame rolling stats for ${Object.keys(this.pregamePitcherFeatureMap).length} games.`);
+        }
+      }
 
       // Load games (either via individual season files or fallback consolidated file)
       let rawGames: any[] = [];
@@ -316,19 +358,41 @@ export class DataPipeline {
     const homeRunDiff = ((homeTeamStats.pitching.runSupport || 700) - (homeTeamStats.pitching.runs || 700)) / homeGamesPlayed;
     const awayRunDiff = ((awayTeamStats.pitching.runSupport || 700) - (awayTeamStats.pitching.runs || 700)) / awayGamesPlayed;
 
-    const homeStarterERA = homeStarterStats ? parseFloat(homeStarterStats.era || "4.40") : 4.40;
-    const awayStarterERA = awayStarterStats ? parseFloat(awayStarterStats.era || "4.40") : 4.40;
+    // Check if we have pregame rolling stats from our safe CSV pipeline
+    const pf = game.gamePk ? this.pregamePitcherFeatureMap[game.gamePk] : null;
 
-    const homeStarterWHIP = homeStarterStats ? parseFloat(homeStarterStats.whip || "1.30") : 1.30;
-    const awayStarterWHIP = awayStarterStats ? parseFloat(awayStarterStats.whip || "1.30") : 1.30;
+    let homeStarterERA = 4.40;
+    let awayStarterERA = 4.40;
+    let homeStarterWHIP = 1.30;
+    let awayStarterWHIP = 1.30;
+    let homeStarterSOBB = 2.50;
+    let awayStarterSOBB = 2.50;
 
-    const homeStarterSO = homeStarterStats ? homeStarterStats.strikeOuts || 100 : 100;
-    const homeStarterBB = homeStarterStats ? homeStarterStats.baseOnBalls || 40 : 40;
-    const homeStarterSOBB = homeStarterSO / (homeStarterBB || 1);
+    if (pf) {
+      homeStarterERA = pf.home_era_pre_game;
+      awayStarterERA = pf.away_era_pre_game;
+      homeStarterWHIP = pf.home_whip_pre_game;
+      awayStarterWHIP = pf.away_whip_pre_game;
+      homeStarterSOBB = pf.home_bb_pct_pre_game > 0 ? (pf.home_k_pct_pre_game / pf.home_bb_pct_pre_game) : (pf.home_k_pct_pre_game * 12);
+      awayStarterSOBB = pf.away_bb_pct_pre_game > 0 ? (pf.away_k_pct_pre_game / pf.away_bb_pct_pre_game) : (pf.away_k_pct_pre_game * 12);
+    } else {
+      const homeStarterStats = game.homeStarterId ? this.pitcherMap[`${season}_${game.homeStarterId}`] as any : null;
+      const awayStarterStats = game.awayStarterId ? this.pitcherMap[`${season}_${game.awayStarterId}`] as any : null;
 
-    const awayStarterSO = awayStarterStats ? awayStarterStats.strikeOuts || 100 : 100;
-    const awayStarterBB = awayStarterStats ? awayStarterStats.baseOnBalls || 40 : 40;
-    const awayStarterSOBB = awayStarterSO / (awayStarterBB || 1);
+      homeStarterERA = homeStarterStats ? parseFloat(homeStarterStats.era || "4.40") : 4.40;
+      awayStarterERA = awayStarterStats ? parseFloat(awayStarterStats.era || "4.40") : 4.40;
+
+      homeStarterWHIP = homeStarterStats ? parseFloat(homeStarterStats.whip || "1.30") : 1.30;
+      awayStarterWHIP = awayStarterStats ? parseFloat(awayStarterStats.whip || "1.30") : 1.30;
+
+      const homeStarterSO = homeStarterStats ? homeStarterStats.strikeOuts || 100 : 100;
+      const homeStarterBB = homeStarterStats ? homeStarterStats.baseOnBalls || 40 : 40;
+      homeStarterSOBB = homeStarterSO / (homeStarterBB || 1);
+
+      const awayStarterSO = awayStarterStats ? awayStarterStats.strikeOuts || 100 : 100;
+      const awayStarterBB = awayStarterStats ? awayStarterStats.baseOnBalls || 40 : 40;
+      awayStarterSOBB = awayStarterSO / (awayStarterBB || 1);
+    }
 
     const homeSavePct = (homeTeamStats.pitching.saves || 40) / ((homeTeamStats.pitching.saveOpportunities || 50) || 1);
     const awaySavePct = (awayTeamStats.pitching.saves || 40) / ((awayTeamStats.pitching.saveOpportunities || 50) || 1);

@@ -16,6 +16,7 @@ try:
         if len(gamelogs) > 0:
             first_log = gamelogs[0]
             print("Game date:", first_log.get("date"))
+            print("Game object:", first_log.get("game"))
             print("Is Starter:", first_log.get("stat", {}).get("gamesStarted"))
             print("Innings Pitched:", first_log.get("stat", {}).get("inningsPitched"))
             print("Strikeouts:", first_log.get("stat", {}).get("strikeOuts"))
