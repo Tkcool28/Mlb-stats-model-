@@ -14,30 +14,8 @@
 - Unmatched team gamePk count: 1
 - Unmatched pitching gamePk count: 26966
 
-## Validation
-- Duplicate gamePk count: 0
-- Missing target count: 0
-- Numeric missing count: 0
-- Numeric columns imputed to 0: ['home_run_diff_per_game_pre_game', 'away_run_diff_per_game_pre_game', 'home_runs_scored_per_game_pre_game', 'away_runs_scored_per_game_pre_game', 'home_runs_allowed_per_game_pre_game', 'away_runs_allowed_per_game_pre_game', 'home_last_10_win_pct', 'away_last_10_win_pct', 'home_last_10_run_diff_per_game', 'away_last_10_run_diff_per_game', 'home_games_played_to_date', 'away_games_played_to_date', 'home_field_flag']
-- Columns dropped during merge: ['date_pitching', 'season_pitching', 'homeAbbr', 'awayAbbr']
+## Missing team gamePk by season
+- 2010: 1
+- Missing gamePk sample (max 25): [265778]
 
-## Final row count by season
-- 2010: 2429
-- 2011: 2429
-- 2012: 2430
-- 2013: 2431
-- 2014: 655
-
-## Final column count
-- 126
-
-## First 25 columns
-- gamePk, season, date, home_team, away_team, result_home_win, home_win_pct_pre_game, away_win_pct_pre_game, home_run_diff_per_game_pre_game, away_run_diff_per_game_pre_game, home_runs_scored_per_game_pre_game, away_runs_scored_per_game_pre_game, home_runs_allowed_per_game_pre_game, away_runs_allowed_per_game_pre_game, home_last_10_win_pct, away_last_10_win_pct, home_last_10_run_diff_per_game, away_last_10_run_diff_per_game, home_games_played_to_date, away_games_played_to_date, home_field_flag, homeStarterId, awayStarterId, homeStarterName, awayStarterName
-
-## Last 25 columns
-- away_bullpen_pitches_last_1_day, away_bullpen_pitches_last_3_days, away_bullpen_pitches_last_5_days, away_relievers_used_last_1_day, away_relievers_used_last_3_days, away_relievers_used_last_5_days, away_unique_relievers_used_last_1_day, away_unique_relievers_used_last_3_days, away_unique_relievers_used_last_5_days, away_bullpen_used_fallback, away_bullpen_source_games_to_date, away_bullpen_last_source_date, bullpen_era_diff, bullpen_whip_diff, bullpen_fip_diff, bullpen_k_pct_diff, bullpen_bb_pct_diff, bullpen_k_minus_bb_pct_diff, bullpen_hr_per_9_diff, bullpen_ip_to_date_diff, bullpen_pitches_to_date_diff, bullpen_ip_last_3_days_diff, bullpen_pitches_last_3_days_diff, relievers_used_last_3_days_diff, unique_relievers_used_last_3_days_diff
-
-## Non-feature identifier/audit columns
-- gamePk, date, season, home_team, away_team, result_home_win
-
-PASS: Combined team + pitching model input is ready. It contains one row per game, result_home_win is present, gamePk is unique, numeric model features have no missing values, and pitcher/bullpen features were merged without target leakage columns.
+FAIL: Inner merge row loss detected; stopping per policy.
