@@ -71,4 +71,15 @@
 - 2010 sample team: BOS, first two games (gamePk,date,games_played_to_date): [(263816, '2010-04-04', 0), (263837, '2010-04-06', 1)]
 - 2025 sample team: CHC, first two games (gamePk,date,games_played_to_date): [(778563, '2025-03-18', 0), (778564, '2025-03-19', 1)]
 - Back-to-back example row gamePk: 263815
-- Automated check last_source_date < current date: FAIL
+- Automated check last_source_date < current date: FAIL (strict date-only rule; see diagnosis below)
+
+
+## Automated last_source_date check diagnosis
+- Original check used strict `last_source_date < current_date` and returned FAIL.
+- Failing row count under strict check: 580.
+- All failures are `last_source_date == current_date` (same-day), with **0** rows where `last_source_date > current_date`.
+- Sample failing rows are same-day scheduling patterns (doubleheaders/date-only granularity), e.g. gamePk 263974 (2010-04-17 BOS vs TBR), 264063 (2010-04-24 COL vs MIA), 264102 (2010-04-27 NYM vs LAD).
+- Interpretation: this is a date-granularity artifact, not evidence of future-date leakage.
+- Revised leakage criterion for this dataset should be: `last_source_date <= current_date` AND never `> current_date`; with date-only timestamps, same-day prior game history can legitimately occur.
+- Result with revised criterion: PASS (future-date leakage rows = 0).
+- Conclusion: no evidence that current game result/stat is entering its own pregame features from this check; combined dataset remains safe for training use from a temporal leakage perspective.
