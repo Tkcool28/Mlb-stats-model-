@@ -39,77 +39,95 @@ jobs:
           git archive --format=tar 002f98f435e5b5741b27316fffb3d2a7b5d6ad5b reports/team reports/model_inputs | tar -x -C artifacts/release/recovered/reports
 
           python - <<'PY'
-import gzip, shutil, zipfile, hashlib, json, csv
-from pathlib import Path
-root=Path('artifacts/release')
-rec=root/'recovered'
-with zipfile.ZipFile(root/'raw_games_2010_2025.zip','w',compression=zipfile.ZIP_DEFLATED) as z:
-    for y in range(2010,2026):
-        z.write(rec/f'raw_games/mlb_games_{y}.json',f'data/raw/games/mlb_games_{y}.json')
-with open(rec/'pregame_features_2010_2025.csv','rb') as fi, gzip.open(root/'processed_team_features_2010_2025.csv.gz','wb') as fo:
-    shutil.copyfileobj(fi,fo)
-shutil.copy2(rec/'pitching_features_export_2010_2025.csv.gz',root/'pitching_features_export_2010_2025.csv.gz')
-with open(rec/'pregame_team_pitching_features_2010_2025.csv','rb') as fi, gzip.open(root/'model_input_team_pitching_2010_2025.csv.gz','wb') as fo:
-    shutil.copyfileobj(fi,fo)
-with zipfile.ZipFile(root/'reports_bundle_2010_2025.zip','w',compression=zipfile.ZIP_DEFLATED) as z:
-    for p in (rec/'reports').rglob('*'):
-        if p.is_file():
-            z.write(p,p.relative_to(rec).as_posix())
+          import gzip, shutil, zipfile, hashlib, json, csv
+          from pathlib import Path
 
-def sha256(path):
-    h=hashlib.sha256()
-    with open(path,'rb') as f:
-        for c in iter(lambda:f.read(1<<20),b''): h.update(c)
-    return h.hexdigest()
+          root = Path('artifacts/release')
+          rec = root / 'recovered'
 
-def shape(path):
-    op=gzip.open if str(path).endswith('.gz') else open
-    with op(path,'rt',newline='') as f:
-        r=csv.reader(f)
-        hdr=next(r)
-        n=sum(1 for _ in r)
-    return n,len(hdr)
-arts=[]
-for fn,dest in [
-  ('raw_games_2010_2025.zip','data/raw/games/'),
-  ('processed_team_features_2010_2025.csv.gz','data/processed/team/pregame_features_2010_2025.csv'),
-  ('pitching_features_export_2010_2025.csv.gz','data/processed/pitching/pitching_features_export_2010_2025.csv.gz'),
-  ('model_input_team_pitching_2010_2025.csv.gz','data/processed/model_inputs/pregame_team_pitching_features_2010_2025.csv'),
-  ('reports_bundle_2010_2025.zip','reports/'),
-]:
-    p=root/fn
-    item={'filename':fn,'size_bytes':p.stat().st_size,'sha256':sha256(p),'restore_destination_path':dest}
-    if fn.endswith('.csv.gz'):
-        rr,cc=shape(p)
-        item['row_count']=rr
-        item['column_count']=cc
-    arts.append(item)
-(root/'release_artifacts_manifest_2010_2025.json').write_text(json.dumps({'recovered_from_commit':'002f98f435e5b5741b27316fffb3d2a7b5d6ad5b','artifacts':arts},indent=2))
-PY
+          with zipfile.ZipFile(root / 'raw_games_2010_2025.zip', 'w', compression=zipfile.ZIP_DEFLATED) as z:
+              for y in range(2010, 2026):
+                  z.write(rec / f'raw_games/mlb_games_{y}.json', f'data/raw/games/mlb_games_{y}.json')
+
+          with open(rec / 'pregame_features_2010_2025.csv', 'rb') as fi, gzip.open(root / 'processed_team_features_2010_2025.csv.gz', 'wb') as fo:
+              shutil.copyfileobj(fi, fo)
+
+          shutil.copy2(rec / 'pitching_features_export_2010_2025.csv.gz', root / 'pitching_features_export_2010_2025.csv.gz')
+
+          with open(rec / 'pregame_team_pitching_features_2010_2025.csv', 'rb') as fi, gzip.open(root / 'model_input_team_pitching_2010_2025.csv.gz', 'wb') as fo:
+              shutil.copyfileobj(fi, fo)
+
+          with zipfile.ZipFile(root / 'reports_bundle_2010_2025.zip', 'w', compression=zipfile.ZIP_DEFLATED) as z:
+              for p in (rec / 'reports').rglob('*'):
+                  if p.is_file():
+                      z.write(p, p.relative_to(rec).as_posix())
+
+          def sha256(path):
+              h = hashlib.sha256()
+              with open(path, 'rb') as f:
+                  for c in iter(lambda: f.read(1 << 20), b''):
+                      h.update(c)
+              return h.hexdigest()
+
+          def shape(path):
+              op = gzip.open if str(path).endswith('.gz') else open
+              with op(path, 'rt', newline='') as f:
+                  r = csv.reader(f)
+                  hdr = next(r)
+                  n = sum(1 for _ in r)
+              return n, len(hdr)
+
+          arts = []
+          for fn, dest in [
+              ('raw_games_2010_2025.zip', 'data/raw/games/'),
+              ('processed_team_features_2010_2025.csv.gz', 'data/processed/team/pregame_features_2010_2025.csv'),
+              ('pitching_features_export_2010_2025.csv.gz', 'data/processed/pitching/pitching_features_export_2010_2025.csv.gz'),
+              ('model_input_team_pitching_2010_2025.csv.gz', 'data/processed/model_inputs/pregame_team_pitching_features_2010_2025.csv'),
+              ('reports_bundle_2010_2025.zip', 'reports/'),
+          ]:
+              p = root / fn
+              item = {
+                  'filename': fn,
+                  'size_bytes': p.stat().st_size,
+                  'sha256': sha256(p),
+                  'restore_destination_path': dest,
+              }
+              if fn.endswith('.csv.gz'):
+                  rr, cc = shape(p)
+                  item['row_count'] = rr
+                  item['column_count'] = cc
+              arts.append(item)
+
+          (root / 'release_artifacts_manifest_2010_2025.json').write_text(
+              json.dumps({'recovered_from_commit': '002f98f435e5b5741b27316fffb3d2a7b5d6ad5b', 'artifacts': arts}, indent=2)
+          )
+          PY
 
       - name: Validate artifact shapes
         run: |
           python - <<'PY'
-import gzip,csv,zipfile
+          import gzip, csv, zipfile
 
-def shape(path):
-    op=gzip.open if path.endswith('.gz') else open
-    with op(path,'rt',newline='') as f:
-        r=csv.reader(f)
-        hdr=next(r)
-        n=sum(1 for _ in r)
-    return n,len(hdr)
-team=shape('artifacts/release/processed_team_features_2010_2025.csv.gz')
-pit=shape('artifacts/release/pitching_features_export_2010_2025.csv.gz')
-comb=shape('artifacts/release/model_input_team_pitching_2010_2025.csv.gz')
-with zipfile.ZipFile('artifacts/release/raw_games_2010_2025.zip') as z:
-    raw_count=len([n for n in z.namelist() if n.endswith('.json')])
-print('team',team,'pitching',pit,'combined',comb,'raw_count',raw_count)
-assert team==(37340,29)
-assert pit==(37340,110)
-assert comb==(37340,134)
-assert raw_count==16
-PY
+          def shape(path):
+              op = gzip.open if path.endswith('.gz') else open
+              with op(path, 'rt', newline='') as f:
+                  r = csv.reader(f)
+                  hdr = next(r)
+                  n = sum(1 for _ in r)
+              return n, len(hdr)
+
+          team = shape('artifacts/release/processed_team_features_2010_2025.csv.gz')
+          pit = shape('artifacts/release/pitching_features_export_2010_2025.csv.gz')
+          comb = shape('artifacts/release/model_input_team_pitching_2010_2025.csv.gz')
+          with zipfile.ZipFile('artifacts/release/raw_games_2010_2025.zip') as z:
+              raw_count = len([n for n in z.namelist() if n.endswith('.json')])
+
+          print('team', team, 'pitching', pit, 'combined', comb, 'raw_count', raw_count)
+          assert team == (37340, 29)
+          assert pit == (37340, 110)
+          assert comb == (37340, 134)
+          assert raw_count == 16
+          PY
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
