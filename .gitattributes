@@ -1,6 +1,7 @@
 *.csv -diff
 *.csv.gz -diff
 *.json -diff
+*.jsonl -diff
 *.joblib -diff
 *.pkl -diff
 *.parquet -diff
@@ -8,5 +9,6 @@
 *.sqlite -diff
 *.db -diff
 data/raw/** -diff
+data/interim/** -diff
 data/processed/** -diff
 models/** -diff
