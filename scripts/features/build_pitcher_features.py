@@ -10,8 +10,8 @@ def main():
     print("======================================================================")
 
     data_dir = "./src/data"
-    reports_dir = "./reports/stats_model"
-    processed_dir = "./data/processed/stats_model"
+    reports_dir = "./reports/pitching"
+    processed_dir = "./data/processed/pitching"
     cache_dir = "./.cache"
 
     os.makedirs(reports_dir, exist_ok=True)

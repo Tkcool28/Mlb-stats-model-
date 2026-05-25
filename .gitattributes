@@ -1,0 +1,12 @@
+*.csv -diff
+*.csv.gz -diff
+*.json -diff
+*.joblib -diff
+*.pkl -diff
+*.parquet -diff
+*.feather -diff
+*.sqlite -diff
+*.db -diff
+data/raw/** -diff
+data/processed/** -diff
+models/** -diff

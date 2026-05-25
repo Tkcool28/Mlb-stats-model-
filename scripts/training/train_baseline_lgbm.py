@@ -15,9 +15,9 @@ def main():
 
     # Paths
     data_dir = "./src/data"
-    reports_dir = "./reports/stats_model"
-    models_dir = "./models/stats_model"
-    processed_dir = "./data/processed/stats_model"
+    reports_dir = "./reports/team"
+    models_dir = "./models/team_only"
+    processed_dir = "./data/processed/team"
 
     os.makedirs(reports_dir, exist_ok=True)
     os.makedirs(models_dir, exist_ok=True)
