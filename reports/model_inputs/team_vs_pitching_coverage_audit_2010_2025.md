@@ -20,10 +20,6 @@
 | 2022 | 2430 | 2430 | 2430 | 0 | 0 |
 | 2023 | 2430 | 2430 | 2430 | 0 | 0 |
 | 2024 | 2429 | 2429 | 2429 | 0 | 0 |
-| 2025 | 2427 | 2429 | 2427 | 0 | 2 |
+| 2025 | 2429 | 2429 | 2429 | 0 | 0 |
 
 - gamePk 265778 is NOT present in rebuilt team file (old bad row not carried forward).
-
-## Explicit mismatch details
-- Unmatched pitching gamePk values: 778563, 778564.
-- Both are 2025 CHC vs LAD games on 2025-03-18 and 2025-03-19 present in pitching export but absent from local `src/data/mlb_games_2025.json`; therefore they are absent from rebuilt team features.

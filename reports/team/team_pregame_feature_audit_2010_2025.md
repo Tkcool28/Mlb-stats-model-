@@ -19,7 +19,7 @@
 - 2022: 2431
 - 2023: 2436
 - 2024: 2432
-- 2025: 2432
+- 2025: 2434
 
 ## Processed team feature rows by season
 - 2010: 2429 (2010-04-04 to 2010-10-03)
@@ -37,7 +37,7 @@
 - 2022: 2430 (2022-04-07 to 2022-10-05)
 - 2023: 2430 (2023-03-30 to 2023-10-01)
 - 2024: 2429 (2024-03-20 to 2024-09-30)
-- 2025: 2427 (2025-03-27 to 2025-09-28)
+- 2025: 2429 (2025-03-18 to 2025-09-28)
 
 - Duplicate gamePk count: 0
 - Missing gamePk count: 0
@@ -69,6 +69,6 @@
 
 ## Leakage checks
 - 2010 sample team: BOS, first two games (gamePk,date,games_played_to_date): [(263816, '2010-04-04', 0), (263837, '2010-04-06', 1)]
-- 2025 sample team: SDP, first two games (gamePk,date,games_played_to_date): [(778545, '2025-03-27', 0), (778542, '2025-03-28', 1)]
+- 2025 sample team: CHC, first two games (gamePk,date,games_played_to_date): [(778563, '2025-03-18', 0), (778564, '2025-03-19', 1)]
 - Back-to-back example row gamePk: 263815
 - Automated check last_source_date < current date: FAIL

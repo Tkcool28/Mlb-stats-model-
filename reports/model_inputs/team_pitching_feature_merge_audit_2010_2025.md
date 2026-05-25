@@ -7,12 +7,12 @@
 - Audit report: `reports/model_inputs/team_pitching_feature_merge_audit_2010_2025.md`
 
 ## Merge counts
-- Team row count: 37338
+- Team row count: 37340
 - Pitching row count: 37340
-- Merged row count: 37338
+- Merged row count: 37340
 - Row loss count: 0
 - Unmatched team gamePk count: 0
-- Unmatched pitching gamePk count: 2
+- Unmatched pitching gamePk count: 0
 
 ## Validation
 - Duplicate gamePk count: 0
@@ -36,7 +36,7 @@
 - 2022: 2430
 - 2023: 2430
 - 2024: 2429
-- 2025: 2427
+- 2025: 2429
 
 ## Final column count
 - 134
