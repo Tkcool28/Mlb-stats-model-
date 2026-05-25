@@ -30,3 +30,23 @@
 - Pitching export has been imported into the processed pitching area.
 - Next step is combined team + pitching LightGBM training.
 - Odds/market features are intentionally not included yet.
+
+
+## Large Data Artifacts
+
+Large raw/processed/model artifacts are stored in GitHub Releases rather than tracked in Git to keep Codex/Git operations fast.
+
+Use:
+`python scripts/data/restore_release_artifacts.py --local-artifacts-dir artifacts/release`
+
+Expected release artifact names:
+- `raw_games_2010_2025.zip`
+- `processed_team_features_2010_2025.csv.gz`
+- `pitching_features_export_2010_2025.csv.gz`
+- `model_input_team_pitching_2010_2025.csv.gz`
+
+Expected restored shapes:
+- team features rows: 37,340
+- pitching rows: 37,340
+- combined rows: 37,340
+- combined columns: 134

@@ -6,3 +6,10 @@ coverage/
 *.log
 .env*
 !.env.example
+artifacts/
+data/raw/
+data/interim/
+data/processed/**/*.csv
+data/processed/**/*.csv.gz
+models/**/*.joblib
+models/**/*.pkl
