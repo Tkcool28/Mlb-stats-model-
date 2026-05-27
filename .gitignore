@@ -13,3 +13,8 @@ data/processed/**/*.csv
 data/processed/**/*.csv.gz
 models/**/*.joblib
 models/**/*.pkl
+data/processed/
+models/
+*.csv
+*.csv.gz
+*.zip

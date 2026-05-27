@@ -50,3 +50,13 @@ Expected restored shapes:
 - pitching rows: 37,340
 - combined rows: 37,340
 - combined columns: 134
+
+
+### Restore data locally when needed
+
+Large datasets are stored in GitHub Releases (tag `v0.1-data-2010-2025`), not tracked in Git.
+Codex/local development does not need these files unless running data/model jobs.
+
+To restore all required datasets locally:
+
+`python scripts/data/restore_release_artifacts.py`
