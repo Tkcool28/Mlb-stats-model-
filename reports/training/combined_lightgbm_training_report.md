@@ -70,3 +70,5 @@
 ## Leakage sanity notes
 - Checked configured exclusions for identifiers/date/teams/target and suspicious columns prior to fit.
 - If metrics appear unusually strong, re-audit suspicious columns and split leakage.
+- prediction output path: `reports/training/combined_lightgbm_test_predictions.csv`
+- prediction audit report: `reports/training/combined_lightgbm_prediction_audit.md`
